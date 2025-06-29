@@ -15,18 +15,19 @@ Depends: R (>= 4.1.0)
 Imports:
     TestGenerator,
     CDMConnector,
-    CirceR,
     dplyr,
-    DBI,
     readxl,
-    writexl,
-    checkmate
+    checkmate,
+    omopgenerics
 Suggests:
     testthat (>= 3.0.0),
     devtools,
     knitr,
     rmarkdown,
     jsonlite,
-    covr
+    covr,
+    writexl,
+    CirceR,
+    DBI
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr

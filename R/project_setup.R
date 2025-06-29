@@ -63,8 +63,8 @@ setup_cohort_testing_project <- function(project_name,
     create_github_actions_workflow(project_path)
   }
   
-  message("✅ Created cohort testing project at: ", project_path)
-  message("📝 Next steps:")
+  message("** Created cohort testing project at: ", project_path)
+  message("** Next steps:")
   message("   1. Replace inst/testdata/patients.xlsx with your patient data")
   message("   2. Replace inst/testdata/", cohort_name, ".json with your cohort definition")
   message("   3. Update explanation tab in Excel with expected results")
@@ -227,7 +227,11 @@ create_template_patients_excel <- function(project_path) {
     explanation = explanation
   )
   
-  write_xlsx(excel_data, file.path(project_path, "inst", "testdata", "patients.xlsx"))
+  if (requireNamespace("writexl", quietly = TRUE)) {
+    writexl::write_xlsx(excel_data, file.path(project_path, "inst", "testdata", "patients.xlsx"))
+  } else {
+    stop("Package 'writexl' is required but not available. Please install it with: install.packages('writexl')")
+  }
 }
 
 create_template_cohort_json <- function(project_path, cohort_name) {

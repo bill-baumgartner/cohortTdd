@@ -264,10 +264,10 @@ validate_my_cohort <- function(patients_file, cohort_file = NULL, cohorts_path =
     explanation_data <- read_explanation_data(patients_file)
     expected_patient_count <- nrow(explanation_data)
     
-    cat("\n🔄 Running cohort validation for", expected_patient_count, "patients...\n")
-    cat("   • Initial setup: ~90 seconds (downloads empty CDM data - ~1.2G disk space required)\n")
-    cat("   • Per-patient testing: ~5-10 seconds each (cohort generation overhead) - further optimization is needed\n")
-    cat("   • To speed up future runs: Set EUNOMIA_DATA_FOLDER in your .Renviron file\n\n")
+    cat("\n** Running cohort validation for", expected_patient_count, "patients...\n")
+    cat("   - Initial setup: ~90 seconds (downloads empty CDM data - ~1.2G disk space required)\n")
+    cat("   - Per-patient testing: ~5-10 seconds each (cohort generation overhead) - further optimization is needed\n")
+    cat("   - To speed up future runs: Set EUNOMIA_DATA_FOLDER in your .Renviron file\n\n")
     cat("   Validation summary will appear when complete...\n\n")
   }
   
@@ -484,7 +484,7 @@ print_validation_summary <- function(results_summary) {
   
   # Show failed tests
   if (failed_tests > 0) {
-    cat("\n❌ FAILED TESTS:\n")
+    cat("\n** FAILED TESTS:\n")
     cat(paste(rep("-", 50), collapse=""), "\n")
     for (result in test_results) {
       if (result$status %in% c("FAILED", "ERROR")) {
@@ -498,13 +498,13 @@ print_validation_summary <- function(results_summary) {
   }
   
   # Show detailed results
-  cat("\n📋 DETAILED RESULTS:\n")
+  cat("\n** DETAILED RESULTS:\n")
   cat(paste(rep("-", 50), collapse=""), "\n")
   for (result in test_results) {
     status_icon <- switch(result$status,
-                         "PASSED" = "✅",
-                         "FAILED" = "❌", 
-                         "ERROR" = "💥")
+                         "PASSED" = "[PASS]",
+                         "FAILED" = "[FAIL]", 
+                         "ERROR" = "[ERROR]")
     cat(sprintf("%s Patient %d: %s\n", status_icon, result$patient_id, result$explanation))
   }
   cat("\n")
