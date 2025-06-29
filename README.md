@@ -12,7 +12,7 @@ Test-driven development for OHDSI cohort definitions. This package provides a si
 
 ```r
 # Install development version from GitHub (when published)
-# devtools::install_github("your-org/cohortTdd")
+devtools::install_github("your-org/cohortTdd")
 
 # Or install locally
 devtools::install_local("path/to/cohortTdd")
@@ -34,7 +34,7 @@ results <- validate_my_cohort(
 )
 ```
 
-### Option 2: Set Up Testing Project (For CI/CD)
+### Option 2: Set Up Testing Project (For CI)
 
 Create a complete testing project with GitHub Actions:
 
@@ -64,7 +64,7 @@ Your Excel file should contain:
   - `reason_id`: Expected exclusion reason ID (NA for included patients)
   - `explanation`: Free text description of expected outcome
 
-## For CI/CD Integration
+## For CI Integration
 
 Wrap the validation in a testthat test using R package conventions:
 
