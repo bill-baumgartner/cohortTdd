@@ -1,0 +1,128 @@
+---
+title: "Getting Started with cohortTdd"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with cohortTdd}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE  # Don't run examples during package build
+)
+```
+
+```{r setup}
+library(cohortTdd)
+```
+
+# Introduction
+
+The `cohortTdd` package provides a framework for test-driven development of OHDSI cohort definitions. It allows you to easily validate cohort logic against synthetic patient data with known inclusion/exclusion patterns.
+
+## Core Concept
+
+Test-driven development for cohorts follows this workflow:
+
+1. **Create test patients** with known characteristics
+2. **Define expected outcomes** (included/excluded with specific reasons)
+3. **Develop your cohort definition** (as ATLAS JSON)
+4. **Test your cohort definition** against the synthetic data
+5. **Iterate** until all tests pass
+
+## Quick Start
+
+### Option 1: Direct Validation
+
+The simplest way to test a cohort:
+
+```{r direct-validation}
+# Test your cohort directly
+results <- validate_my_cohort(
+  patients_file = "my_patients.xlsx",
+  cohort_file = "my_cohort.json"
+)
+
+# View results
+print(results)
+```
+
+### Option 2: Create a Testing Project
+
+For more complex testing with CI/CD integration:
+
+```{r create-project}
+# Create a complete testing project
+setup_cohort_testing_project(
+  project_name = "my-diabetes-cohort-test",
+  cohort_name = "diabetes_cohort",
+  author_name = "Your Name"
+)
+```
+
+This creates:
+- Template test files using R package conventions
+- Example patient data
+- Proper directory structure (`inst/testdata/`)
+- GitHub Actions workflow for CI/CD
+- README with instructions
+
+## Patient Data Format
+
+Your Excel file should contain:
+
+### Required Tables
+Standard OMOP CDM tables like:
+- `person` - Patient demographics
+- `observation_period` - Follow-up periods
+- `drug_exposure` - Medication data
+- `condition_occurrence` - Diagnosis data
+- `measurement` - Lab values, vitals
+- `procedure_occurrence` - Procedures
+
+### Required Explanation Tab
+A special `explanation` sheet with:
+
+| Column | Description |
+|--------|-------------|
+| `patient_id` | Patient identifier |
+| `reason_id` | Expected exclusion reason ID (NA for included patients) |
+| `explanation` | Free text description |
+
+The reason ID is an integer linked to the order of constraints in your cohort definition
+1 = excluded based on the cohort entry events
+2 = excluded based on the first inclusion criteria
+3 = excluded based on the second inclusion criteria
+n = excluded based on the (n-1)th inclusion criteria
+
+### Example Structure
+
+```{r patient-data-example}
+# Example explanation tab:
+explanation <- data.frame(
+  patient_id = 1:4,
+  reason_id = c(NA, 1, 2, NA),
+  explanation = c(
+    "INCLUDE - Meets all criteria",
+    "EXCLUDE - Failed cohort entry criteria",
+    "EXCLUDE - Failed first inclusion criteria", 
+    "INCLUDE - Meets all criteria"
+  )
+)
+```
+
+## Performance Notes
+
+- **Initial setup:** ~90 seconds (downloads empty CDM data)
+- **Per patient:** ~5-10 seconds (cohort generation overhead)
+- **Optimization:** Uses shared CDM to minimize setup time
+
+This is a proof-of-concept; further optimization would be needed for production use with large numbers of test patients.
+
+## Next Steps
+
+- See `vignette("ci-integration")` for automated testing
+- Check out the `cohortTdd.demo` project for a complete example

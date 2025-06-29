@@ -1,0 +1,32 @@
+Package: cohortTdd
+Type: Package
+Title: Test-Driven Development for OHDSI Cohort Definitions
+Version: 0.1.0
+Authors@R: person("Bill", "Baumgartner", email = "william.baumgartner@cuanschutz.edu", role = c("aut", "cre"))
+Description: A package for testing OHDSI cohort definitions using synthetic patient data. 
+    Provides parameterized testing framework that automatically validates cohort logic 
+    against expected patient inclusion/exclusion patterns using TestGenerator and CDMConnector.
+License: MIT + file LICENSE
+URL: https://github.com/bill-baumgartner/cohortTdd
+BugReports: https://github.com/bill-baumgartner/cohortTdd/issues
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 4.1.0)
+Imports:
+    TestGenerator,
+    CDMConnector,
+    CirceR,
+    dplyr,
+    DBI,
+    readxl,
+    writexl,
+    checkmate
+Suggests:
+    testthat (>= 3.0.0),
+    devtools,
+    knitr,
+    rmarkdown,
+    jsonlite,
+    covr
+RoxygenNote: 7.3.2
+VignetteBuilder: knitr

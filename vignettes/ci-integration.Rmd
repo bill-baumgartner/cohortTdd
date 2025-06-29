@@ -1,0 +1,133 @@
+---
+title: "CI Integration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CI/CD Integration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+```{r setup}
+library(cohortTdd)
+```
+
+# Automated Testing with CI
+
+The `cohortTdd` package supports automated testing through continuous integration pipelines. This enables systematic validation of cohort definitions as they evolve.
+
+## GitHub Actions Integration
+
+### Automatic Setup
+
+When creating a new project, a GitHub Actions workflow is included by default:
+
+```{r github-actions-setup}
+setup_cohort_testing_project(
+  project_name = "my-cohort-test",
+  cohort_name = "diabetes_cohort", 
+  author_name = "Your Name",
+  github_actions = TRUE  # Default
+)
+```
+
+This creates `.github/workflows/test-cohorts.yml` with:
+
+- **R environment setup** (latest R version)
+- **Dependency installation** (cohortTdd and requirements)
+- **Test execution** on push/pull requests
+- **Results reporting** with test summaries
+
+### Manual Workflow Configuration
+
+For existing projects, create `.github/workflows/test-cohorts.yml`:
+
+```yaml
+name: Test Cohort Definitions
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - uses: r-lib/actions/setup-r@v2
+      with:
+        r-version: 'release'
+        
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev libxml2-dev
+        
+    - name: Install R dependencies
+      run: |
+        install.packages(c("remotes", "testthat"))
+        remotes::install_deps(dependencies = TRUE)
+        remotes::install_github("bill-baumgartner/cohortTdd")
+      shell: Rscript {0}
+      
+    - name: Run cohort validation tests
+      run: |
+        library(testthat)
+        library(cohortTdd)
+        test_check("your-project-name")
+      shell: Rscript {0}
+```
+
+## Test Structure for CI
+
+### Automated Test Files
+
+Structure your tests for CI compatibility:
+
+```{r ci-test-structure}
+# tests/testthat/test-cohort-validation.R
+library(testthat)
+library(cohortTdd)
+
+test_that("Primary cohort validation passes", {
+  # Set shorter timeout for CI
+  options(timeout = 600)  # 10 minutes max
+  
+  results <- validate_my_cohort(
+    patients_file = system.file("testdata", "patients.xlsx", package = "your.package"),
+    cohort_file = system.file("testdata", "cohort.json", package = "your.package"),
+    print_summary = FALSE,
+    verbose = FALSE
+  )
+  
+  expect_equal(results$failed_tests, 0)
+  expect_gt(results$total_tests, 0)
+  expect_equal(results$passed_tests, results$total_tests)
+})
+```
+
+### Environment Variables
+
+Configure CI environment for reproducible tests:
+
+```{r ci-environment}
+# In .github/workflows/test-cohorts.yml
+env:
+  EUNOMIA_DATA_FOLDER: ${{ runner.temp }}/eunomia_data
+  R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+  _R_CHECK_FORCE_SUGGESTS_: false
+```
+
+
+This CI integration ensures your cohort definitions are automatically validated with every code change, maintaining quality and catching regressions early.

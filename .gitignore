@@ -1,0 +1,67 @@
+# R Package files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# R build artifacts
+*.tar.gz
+*.Rcheck/
+/check/
+/doc/
+/Meta/
+
+# Package documentation
+man/*.Rd
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Test artifacts and data
+/tests/testthat/Rplots.pdf
+/tests/testthat/*.sqlite
+/tests/testthat/*.duckdb
+test_output.txt
+
+# OHDSI/Eunomia data cache (can be large)
+eunomia.duckdb
+eunomia/
+Eunomia_*
+*.duckdb
+*.sqlite3
+
+# CDM test databases
+/cdm_test_*.duckdb
+/test_cdm/
+/synthetic_cdm/
+
+# TestGenerator outputs
+/generated_data/
+/test_data/
+*.zip
+
+# Cohort generation temporary files
+/cohort_temp/
+/temp_cohorts/
+cohort_*.json.temp
+
+# Log files
+*.log
+validation_*.log
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDE specific
+.vscode/
+*.swp
+*.swo
+*~
+
+# Personal configuration
+.Renviron.local
+config.local.R

@@ -1,0 +1,68 @@
+# GitHub Actions workflow for automated cohort testing
+# Save this as: .github/workflows/test-cohort.yml
+
+name: Test Cohort Definition
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-cohort:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up R
+      uses: r-lib/actions/setup-r@v2
+      with:
+        r-version: "4.4.1"
+        
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev
+    
+    - name: Install R dependencies
+      run: |
+        install.packages(c("remotes", "devtools", "testthat"))
+        # Install cohortTdd package
+        # Option 1: From CRAN (when published)
+        # install.packages("cohortTdd")
+        # Option 2: From GitHub
+        remotes::install_github("your-org/cohortTdd")
+        # Install any additional dependencies
+        if (file.exists("DESCRIPTION")) {
+          remotes::install_deps(dependencies = TRUE)
+        }
+      shell: Rscript {0}
+    
+    - name: Run cohort validation tests
+      run: |
+        if (file.exists("tests")) {
+          devtools::test()
+        } else {
+          # If no formal tests, run validation directly
+          library(cohortTdd)
+          results <- validate_my_cohort(
+            patients_file = "data/patients.xlsx",
+            cohort_file = "cohorts/my_cohort.json"
+          )
+          if (results$failed_tests > 0) {
+            stop("Cohort validation failed")
+          }
+        }
+      shell: Rscript {0}
+    
+    - name: Upload test results on failure
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: test-results
+        path: |
+          tests/testthat/
+          *.log
