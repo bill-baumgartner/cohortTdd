@@ -2,7 +2,6 @@ library(testthat)
 library(cohortTdd)
 library(dplyr)
 library(readxl)
-library(writexl)
 
 # Setup for tests
 setup_test_files <- function() {
@@ -42,7 +41,7 @@ setup_test_files <- function() {
   )
   
   test_excel_file <- file.path(temp_dir, "test_patients.xlsx")
-  write_xlsx(excel_data, test_excel_file)
+  writexl::write_xlsx(excel_data, test_excel_file)
   
   # Create test cohort JSON
   cohort_json <- '{
@@ -348,14 +347,14 @@ test_that("functions handle edge cases appropriately", {
   # Test extract_person_ids with no person_id column
   temp_file <- tempfile(fileext = ".xlsx")
   bad_data <- list(person = data.frame(id = 1:3, name = c("A", "B", "C")))
-  write_xlsx(bad_data, temp_file)
+  writexl::write_xlsx(bad_data, temp_file)
   
   expect_error(extract_person_ids(temp_file))
   
   # Test read_explanation_data with no explanation sheet
   bad_data2 <- list(person = data.frame(person_id = 1:3))
   temp_file2 <- tempfile(fileext = ".xlsx")
-  write_xlsx(bad_data2, temp_file2)
+  writexl::write_xlsx(bad_data2, temp_file2)
   
   expect_error(read_explanation_data(temp_file2))
 })

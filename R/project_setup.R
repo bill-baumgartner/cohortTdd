@@ -190,7 +190,9 @@ test_that("%s cohort validates correctly", {
 
 create_template_patients_excel <- function(project_path) {
   # Create a minimal example Excel file
-  library(writexl)
+  if (!requireNamespace("writexl", quietly = TRUE)) {
+    stop("Package 'writexl' is required but not available. Please install it with: install.packages('writexl')")
+  }
   
   # Example patient data
   person <- data.frame(
