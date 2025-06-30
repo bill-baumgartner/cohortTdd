@@ -386,7 +386,15 @@ validate_cohort_definitions <- function(patients_file, cohorts_path, verbose = T
       
       attrition_result
     }, error = function(e) {
-      list(error = paste("Cohort generation failed:", e$message))
+      # Capture comprehensive error details
+      error_msg <- paste("Cohort generation failed:",
+                        "\n  Message:", e$message,
+                        "\n  Class:", class(e)[1],
+                        "\n  Call:", deparse(e$call)[1])
+      if (verbose) {
+        cat("ERROR DETAILS:\n", error_msg, "\n")
+      }
+      list(error = error_msg)
     })
     
     if ("error" %in% names(cohort_result)) {
