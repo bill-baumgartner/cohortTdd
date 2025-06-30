@@ -51,12 +51,12 @@ extract_exclusion_reason_from_attrition <- function(cohort_attrition) {
   }
 }
 
-#' Prepare cohorts for optimized execution
+#' Prepare cohorts for optimized execution (internal function)
 #'
 #' @param cohort_set Cohort set from CDMConnector::readCohortSet
 #' @param cdm CDM object for context
 #' @return The cohort_set (for now, future optimization will compile SQL)
-#' @export
+#' @keywords internal
 compile_cohort_sql <- function(cohort_set, cdm) {
   # SIMPLIFIED APPROACH: For now, just return the cohort_set
   # This function is a placeholder for future SQL compilation optimization
@@ -72,13 +72,13 @@ compile_cohort_sql <- function(cohort_set, cdm) {
   ))
 }
 
-#' Execute cohorts with current optimization level
+#' Execute cohorts with current optimization level (internal function)
 #'
 #' @param cdm CDM object to execute cohorts on
 #' @param compiled_cohorts Result from compile_cohort_sql
 #' @param name Name for the cohort table
 #' @return CDM object with cohort table added
-#' @export
+#' @keywords internal
 execute_compiled_cohorts <- function(cdm, compiled_cohorts, name = "cohort") {
   # CURRENT IMPLEMENTATION: Use standard generateCohortSet
   # This still provides optimization by using shared CDM and pre-read cohort_set
