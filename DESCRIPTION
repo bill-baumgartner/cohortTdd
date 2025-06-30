@@ -31,3 +31,5 @@ Suggests:
     DBI
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
+Remotes:
+    bill-baumgartner/TestGenerator@fix/eliminate-duplicate-downloads
